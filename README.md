@@ -18,6 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
+Create a file
     # my_server.rb
     require 'text_protocols'
 
@@ -26,9 +27,12 @@ Or install it yourself as:
         "Hello #{params[:name]}"
       end
     end
-    
+
+Run the server
     $ ruby my_server.rb
-    
+    Text Protocols 0.0.1 - PID: 7331, Port: 5000
+
+And telnet the port    
     $ telnet localhost 5000
     Trying 127.0.0.1...
     Connected to localhost.
@@ -36,7 +40,7 @@ Or install it yourself as:
     say-hello name=Jorge
     Hello Jorge
 
-    # If you prefer different port or bind...
+If you prefer different port or bind...
     TextProtocols.start '4000', '192.168.1.123' do
        # Your commands
     end
