@@ -86,7 +86,7 @@ module TextProtocols
     
     def handle command, params
       block = commands[command.chomp.upcase]
-      return "UNKNOW" if block.nil?
+      return "UNKNOWN" if block.nil?
       
       if params
         @params = params
