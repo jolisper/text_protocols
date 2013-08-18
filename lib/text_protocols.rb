@@ -1,5 +1,6 @@
 require 'text_protocols/version'
 require 'gserver'
+require 'pry'
 
 module TextProtocols
 
@@ -50,10 +51,8 @@ module TextProtocols
 
     def serve io
       loop do
-        request = io.readline
-        
-        if request
-          command, params = parse_request request
+        if (message = io.readline)
+          command, params = parser.parse message
           io.puts @protocol.handle command, params
         else
           io.close
@@ -62,40 +61,41 @@ module TextProtocols
       end
     end
     
-    def parse_request request
-      parts = request.split
-      params = {}
-      parts[1..-1].each do |e| 
-        k, v = e.split '='
-        params[k.to_sym] = v
-      end
-      [parts[0], params]
+    def parser
+      RequestParser
     end
   end
 
   class Protocol
-    attr_reader :commands, :params
+    attr_reader :params
     
     def initialize
       @commands = {}
     end
 
     def cmd name, &block
-      commands[name.upcase] = block
+      @commands[name.upcase] = block
     end
     
-    def handle command, params
-      block = commands[command.chomp.upcase]
-      return "UNKNOW" if block.nil?
+    def handle command, args
+      block = @commands[command.chomp.upcase]
+      return "UNKNOW" unless block
       
-      if params
-        @params = params
-      else
-        @params = {}
-      end
+      @params = args || {}
       
       block.call
     end
   end 
 
+  module RequestParser
+    def self.parse message
+      parts = message.split
+      params = parts[1..-1].each_with_object({}) do |elem, hash| 
+        key, value = elem.split '='
+        hash[key.to_sym] = value
+      end
+      [parts[0], params]
+    end
+  end
+  
 end
