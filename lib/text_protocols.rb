@@ -79,7 +79,7 @@ module TextProtocols
     
     def handle command, args
       block = @commands[command.chomp.upcase]
-      return "UNKNOW" unless block
+      return "UNKNOWN" unless block
       
       @params = args || {}
       
